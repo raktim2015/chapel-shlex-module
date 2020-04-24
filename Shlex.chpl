@@ -74,6 +74,8 @@ class shlex
 		var escapedstate = ' ';
 		var nextchar:string;
 		while(true){
+			
+			if(this.tokindex==-1) then break;
 			if ((this.punctuation_chars!='') && (this._pushback_chars.size>0)){
 				nextchar = this._pushback_chars.pop();
 			}
@@ -299,15 +301,43 @@ class shlex
 	}
 }
 
-config const teststr = 'echo \"please preserve    white space\"';
+
+var lst: list(string);
+var f = open("testShlexData.txt",iomode.r);
+var r = f.reader();
+var line:string;
+var count = 0;
+while(r.readline(line))
+{
+	line = line.replace('\n','');
+	var s = new shlex(line,posix=true,punctuation_chars=true);
+	var x = ' ';
+	writeln(" token no :- " , count," ******************************");
+	count+=1;
+	while(x!='')
+	{
+		x = s.get_token();
+		if(x!=' ' || x!='')
+		{
+			lst.append(x);
+		}
+	}
+	writeln(lst);
+	lst.clear();
+
+}
+r.close();
+
+/*config const teststr = 'echo \"please preserve    white space\"';
 writeln(teststr);
+
 writeln("Splitted commands :- ");
 
-var s = new shlex(teststr,posix=true,punctuation_chars = true);
+var s = new shlex(teststr,posix=true,punctuation_chars = false);
 var x = ' ';
 
 while(x!='')
 {
 	x = s.get_token();
 	writeln(x);
-}
+}*/
